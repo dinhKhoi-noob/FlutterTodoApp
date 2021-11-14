@@ -125,7 +125,7 @@ class _OnboardingBuilder extends State<OnboardingBuilder> {
                   right: 0,
                   child: Container(
                     margin: const EdgeInsets.only(top: 20),
-                    height: 300,
+                    height: MediaQuery.of(context).size.height*0.4 - 30,
                     width: MediaQuery.of(context).size.width,
                     decoration: const BoxDecoration(
                       image: DecorationImage(
