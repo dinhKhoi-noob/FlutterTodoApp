@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import './forgot_password_page.dart';
+import './register_page.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -29,6 +30,12 @@ class _LoginPageState extends State<LoginPageState> {
   void _openForgotPasswordPage() {
     Navigator.push(context, MaterialPageRoute(builder: (context) {
       return const ForgotPasswordPage();
+    }));
+  }
+
+  void _openRegisterPage() {
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return const RegisterPage();
     }));
   }
 
@@ -97,18 +104,14 @@ class _LoginPageState extends State<LoginPageState> {
               height: 20,
             ),
             Container(
-              alignment: Alignment.topRight,
-              child:InkWell(
-                onTap: _openForgotPasswordPage,
-                child: const Text(
-                  "Forgot password ?",
-                  style: TextStyle(
-                    fontSize: 17,
-                    fontStyle: FontStyle.italic
+                alignment: Alignment.topRight,
+                child: InkWell(
+                  onTap: _openForgotPasswordPage,
+                  child: const Text(
+                    "Forgot password ?",
+                    style: TextStyle(fontSize: 17, fontStyle: FontStyle.italic),
                   ),
-                ),
-              )
-            ),
+                )),
             const SizedBox(
               height: 40,
             ),
@@ -116,47 +119,45 @@ class _LoginPageState extends State<LoginPageState> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                    Center(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 120,vertical: 15),
-                        child: TextButton(
-                          child: const Text(
-                            "Login",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold
-                            ),
-                          ),
-                          onPressed: (){},
-                        ),
-                        decoration: const BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(7)),
-                          color: Color(0xfff96060)
-                        ),
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(top:10),
-                      padding: const EdgeInsets.symmetric(horizontal: 108,vertical: 15),
-                      child: TextButton(
-                        child: const Text(
-                          "Register",
-                          style: TextStyle(
+                Center(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 120, vertical: 15),
+                    child: TextButton(
+                      child: const Text(
+                        "Login",
+                        style: TextStyle(
                             color: Colors.white,
                             fontSize: 20,
-                            fontWeight: FontWeight.bold
-                          ),
-                        ),
-                        onPressed: (){},
+                            fontWeight: FontWeight.bold),
                       ),
-                      decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(7)),
-                        color: Colors.black
-                      ),
+                      onPressed: () {},
                     ),
-                  
-                
+                    decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(7)),
+                        color: Color(0xfff96060)),
+                  ),
+                ),
+                Container(
+                  margin: const EdgeInsets.only(top: 10),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 108, vertical: 15),
+                  child: TextButton(
+                    child: const Text(
+                      "Register",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    onPressed: () {
+                      _openRegisterPage();
+                    },
+                  ),
+                  decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(7)),
+                      color: Colors.black),
+                ),
               ],
             )
           ],
