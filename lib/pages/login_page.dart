@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import './forgot_password_page.dart';
+import './home_page.dart';
 import '../animation/new_screen_navigator_route.dart';
 
 class LoginPage extends StatelessWidget {
@@ -40,13 +41,18 @@ class _LoginPageState extends State<LoginPageState> {
   }
 
   void _openForgotPasswordPage() {
-    Navigator.push(context, NewScreenNavigatorRoute(child: const ForgotPasswordPage()));
+    Navigator.push(
+        context, NewScreenNavigatorRoute(child: const ForgotPasswordPage()));
+  }
+
+  void _openHomePage() {
+    Navigator.push(context, NewScreenNavigatorRoute(child: const HomePage()));
   }
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      child: Container(
+        child: Container(
           padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -104,8 +110,8 @@ class _LoginPageState extends State<LoginPageState> {
                     onTap: _openForgotPasswordPage,
                     child: const Text(
                       "Forgot password ?",
-                      style: TextStyle(
-                          fontSize: 17, fontStyle: FontStyle.italic),
+                      style:
+                          TextStyle(fontSize: 17, fontStyle: FontStyle.italic),
                     ),
                   )),
               const SizedBox(
@@ -115,11 +121,14 @@ class _LoginPageState extends State<LoginPageState> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Center(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 120, vertical: 15),
-                      child: TextButton(
+                  InkWell(
+                    onTap: () {
+                      _openHomePage();
+                    },
+                    child: Center(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 130, vertical: 24),
                         child: const Text(
                           "Login",
                           style: TextStyle(
@@ -127,11 +136,10 @@ class _LoginPageState extends State<LoginPageState> {
                               fontSize: 20,
                               fontWeight: FontWeight.bold),
                         ),
-                        onPressed: () {},
+                        decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(7)),
+                            color: Color(0xfff96060)),
                       ),
-                      decoration: const BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(7)),
-                          color: Color(0xfff96060)),
                     ),
                   ),
                   Container(
@@ -160,7 +168,6 @@ class _LoginPageState extends State<LoginPageState> {
         onWillPop: () async {
           _moveToPreviousScreen();
           return true;
-        }
-      );
+        });
   }
 }
