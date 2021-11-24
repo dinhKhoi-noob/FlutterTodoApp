@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import './forgot_password_page.dart';
 import './home_page.dart';
 import '../animation/new_screen_navigator_route.dart';
+import './register_page.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -36,6 +37,12 @@ class LoginPageState extends StatefulWidget {
 class _LoginPageState extends State<LoginPageState> {
   final _usernameEditingController = TextEditingController();
   final _passwordEditingController = TextEditingController();
+
+  void _openRegisterPage() {
+    Navigator.push(
+        context, NewScreenNavigatorRoute(child: const RegisterPage()));
+  }
+
   void _moveToPreviousScreen() {
     Navigator.of(context, rootNavigator: true).pop(context);
   }
@@ -72,7 +79,7 @@ class _LoginPageState extends State<LoginPageState> {
               const SizedBox(
                 height: 20,
               ),
-              const Text("Username",
+              const Text("Email",
                   style: TextStyle(
                     fontSize: 25,
                   )),
@@ -81,7 +88,7 @@ class _LoginPageState extends State<LoginPageState> {
                 controller: _usernameEditingController,
                 onChanged: (text) {},
                 decoration: const InputDecoration(
-                  hintText: 'Harry James',
+                  hintText: 'HarryJames@gmail.com',
                 ),
                 style: const TextStyle(fontSize: 20),
               ),
@@ -94,6 +101,7 @@ class _LoginPageState extends State<LoginPageState> {
                   )),
               TextField(
                 autocorrect: false,
+                obscureText: true,
                 controller: _passwordEditingController,
                 onChanged: (text) {},
                 decoration: const InputDecoration(
@@ -142,11 +150,18 @@ class _LoginPageState extends State<LoginPageState> {
                       ),
                     ),
                   ),
-                  Container(
-                    margin: const EdgeInsets.only(top: 10),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 108, vertical: 15),
-                    child: TextButton(
+                  InkWell(
+                    onTap: () {
+                      _openRegisterPage();
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.only(top: 10),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 117, vertical: 25),
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(7)),
+                        color: Colors.black
+                      ),
                       child: const Text(
                         "Register",
                         style: TextStyle(
@@ -154,11 +169,7 @@ class _LoginPageState extends State<LoginPageState> {
                             fontSize: 20,
                             fontWeight: FontWeight.bold),
                       ),
-                      onPressed: () {},
                     ),
-                    decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(7)),
-                        color: Colors.black),
                   ),
                 ],
               )
