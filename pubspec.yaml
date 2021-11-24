@@ -37,6 +37,7 @@ dependencies:
   table_calendar: ^3.0.3
   intl: ^0.17.0
   flutter_slidable: ^0.6.0
+  firebase_core: ^1.10.0
 
 dev_dependencies:
   flutter_test:
