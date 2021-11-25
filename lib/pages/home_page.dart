@@ -6,6 +6,7 @@ import './new_check_list_page.dart';
 import './new_task_page.dart';
 import './new_quick_note_page.dart';
 import '../animation/new_screen_navigator_route.dart';
+import './user_profile_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -33,6 +34,7 @@ class _HomePageState extends State<HomePageState> {
   RangeSelectionMode _rangeSelectionMode = RangeSelectionMode.toggledOn;
   DateTime? _selectedDate;
   DateTime _focusedDate = DateTime.now();
+
   void _navigateToNewScreen(String pageName) {
     Widget destination = const NewCheckListPage();
     if (pageName == 'new_task') {
@@ -40,6 +42,9 @@ class _HomePageState extends State<HomePageState> {
     }
     if (pageName == 'new_quick_note') {
       destination = const NewQuickNotePage();
+    }
+    if (pageName == 'profile') {
+      destination = const UserProfilePage();
     }
     Navigator.push(context, NewScreenNavigatorRoute(child: destination));
   }
@@ -385,8 +390,7 @@ class _HomePageState extends State<HomePageState> {
                             Column(
                               children: <Widget>[
                                 InkWell(
-                                  onTap: () {
-                                  },
+                                  onTap: () {},
                                   child: Column(
                                     children: const <Widget>[
                                       Icon(Icons.menu_rounded,
@@ -408,16 +412,18 @@ class _HomePageState extends State<HomePageState> {
                                 _openPopup(context);
                               },
                               child: Container(
-                                height: 80,
-                                width: 80,
-                                // padding: EdgeInsets.all(30),
-                                margin: const EdgeInsets.only(left:8),
-                                decoration: const BoxDecoration(
-                                  color: Color(0xfff96060),
-                                  shape: BoxShape.circle
-                                ),
-                                child: const Icon(Icons.add,color: Colors.white,size: 40,)
-                              ),
+                                  height: 80,
+                                  width: 80,
+                                  // padding: EdgeInsets.all(30),
+                                  margin: const EdgeInsets.only(left: 8),
+                                  decoration: const BoxDecoration(
+                                      color: Color(0xfff96060),
+                                      shape: BoxShape.circle),
+                                  child: const Icon(
+                                    Icons.add,
+                                    color: Colors.white,
+                                    size: 40,
+                                  )),
                             ),
                             Column(
                               children: <Widget>[
@@ -442,7 +448,9 @@ class _HomePageState extends State<HomePageState> {
                             Column(
                               children: <Widget>[
                                 InkWell(
-                                  onTap: () {},
+                                  onTap: () {
+                                    _navigateToNewScreen("profile");
+                                  },
                                   child: Column(
                                     children: const <Widget>[
                                       Icon(Icons.account_circle_outlined,
@@ -461,8 +469,7 @@ class _HomePageState extends State<HomePageState> {
                             ),
                           ],
                         ),
-                      )
-                    ),
+                      )),
                 ],
               ),
             )
