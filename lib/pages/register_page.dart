@@ -142,7 +142,6 @@ class _RegisterPageState extends State<RegisterPageState> {
               final _auth = AuthServices();
               String _message = await _auth.registerAccount(
                   _account.email!, _account.password!);
-              print(_message);
               if (_message != "success") {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Text(
