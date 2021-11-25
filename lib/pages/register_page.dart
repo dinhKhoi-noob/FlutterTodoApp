@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:todoapp/animation/new_screen_navigator_route.dart';
+import '../services/authenticate.dart';
+import '../model/account.dart';
+import './home_page.dart';
 
 class RegisterPage extends StatelessWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -34,9 +38,12 @@ class RegisterPageState extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPageState> {
   final TextEditingController _emailEditingController = TextEditingController();
-  final TextEditingController _passwordEditingController = TextEditingController();
-  final TextEditingController _confirmPasswordEditingController = TextEditingController();
-
+  final TextEditingController _passwordEditingController =
+      TextEditingController();
+  final TextEditingController _confirmPasswordEditingController =
+      TextEditingController();
+  final Account _account = Account();
+  String? _confirmPassword;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -68,11 +75,14 @@ class _RegisterPageState extends State<RegisterPageState> {
             child: TextField(
               autocorrect: false,
               controller: _emailEditingController,
-              onChanged: (text) {},
-              style: const TextStyle(
-                fontSize: 20
-              ),
-              decoration: const InputDecoration(hintText: "HarryJames@gmail.com"),
+              onChanged: (text) {
+                setState(() {
+                  _account.email = text;
+                });
+              },
+              style: const TextStyle(fontSize: 20),
+              decoration:
+                  const InputDecoration(hintText: "HarryJames@gmail.com"),
             ),
           ),
           Container(
@@ -88,11 +98,12 @@ class _RegisterPageState extends State<RegisterPageState> {
               autocorrect: false,
               obscureText: true,
               controller: _passwordEditingController,
-              onChanged: (text) {},
-              style: const TextStyle(
-                fontSize: 20
-              ),
-              decoration: const InputDecoration(hintText: "Enter your password"),
+              onChanged: (text) {
+                _account.password = text;
+              },
+              style: const TextStyle(fontSize: 20),
+              decoration:
+                  const InputDecoration(hintText: "Enter your password"),
             ),
           ),
           Container(
@@ -108,29 +119,59 @@ class _RegisterPageState extends State<RegisterPageState> {
               obscureText: true,
               autocorrect: false,
               controller: _confirmPasswordEditingController,
-              onChanged: (text) {},
-              style: const TextStyle(
-                fontSize: 20
-              ),
-              decoration: const InputDecoration(hintText: "Confirm your password"),
+              onChanged: (text) {
+                setState(() {
+                  _confirmPassword = text;
+                });
+              },
+              style: const TextStyle(fontSize: 20),
+              decoration:
+                  const InputDecoration(hintText: "Confirm your password"),
             ),
           ),
           InkWell(
-            onTap: (){},
+            onTap: () async {
+              if (_confirmPassword != _account.password) {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    backgroundColor: Color(0xfff96060),
+                    content: Text(
+                      "Password is not equal",
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    )));
+              }
+              final _auth = AuthServices();
+              String _message = await _auth.registerAccount(
+                  _account.email!, _account.password!);
+              print(_message);
+              if (_message != "success") {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text(
+                    _message,
+                    style: const TextStyle(color: Colors.white, fontSize: 20),
+                  ),
+                  backgroundColor: const Color(0xfff96060),
+                ));
+              } else {
+                _emailEditingController.clear();
+                _confirmPasswordEditingController.clear();
+                _passwordEditingController.clear();
+                Navigator.push(
+                    context, NewScreenNavigatorRoute(child: const HomePage()));
+              }
+            },
             child: Container(
-              margin: const EdgeInsets.only(top:40),
-              padding: const EdgeInsets.symmetric(horizontal: 117,vertical: 25),
+              margin: const EdgeInsets.only(top: 40),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 117, vertical: 25),
               decoration: const BoxDecoration(
-                color: Color(0xfff96060),
-                borderRadius: BorderRadius.all(Radius.circular(7))
-              ),
+                  color: Color(0xfff96060),
+                  borderRadius: BorderRadius.all(Radius.circular(7))),
               child: const Text(
                 "Let's go!",
                 style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 25,
-                  fontWeight: FontWeight.bold
-                ),
+                    color: Colors.white,
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold),
               ),
             ),
           )
