@@ -3,6 +3,8 @@ import './forgot_password_page.dart';
 import './home_page.dart';
 import '../animation/new_screen_navigator_route.dart';
 import './register_page.dart';
+import '../model/account.dart';
+import '../services/authenticate.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -37,6 +39,16 @@ class LoginPageState extends StatefulWidget {
 class _LoginPageState extends State<LoginPageState> {
   final _usernameEditingController = TextEditingController();
   final _passwordEditingController = TextEditingController();
+  final Account _account = Account();
+
+  void _openSnackbar(BuildContext context, String content) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        backgroundColor: const Color(0xfff96060),
+        content: Text(
+          content,
+          style: const TextStyle(color: Colors.white),
+        )));
+  }
 
   void _openRegisterPage() {
     Navigator.push(
@@ -86,7 +98,11 @@ class _LoginPageState extends State<LoginPageState> {
               TextField(
                 autocorrect: false,
                 controller: _usernameEditingController,
-                onChanged: (text) {},
+                onChanged: (text) {
+                  setState(() {
+                    _account.email = text;
+                  });
+                },
                 decoration: const InputDecoration(
                   hintText: 'HarryJames@gmail.com',
                 ),
@@ -103,7 +119,11 @@ class _LoginPageState extends State<LoginPageState> {
                 autocorrect: false,
                 obscureText: true,
                 controller: _passwordEditingController,
-                onChanged: (text) {},
+                onChanged: (text) {
+                  setState(() {
+                    _account.password = text;
+                  });
+                },
                 decoration: const InputDecoration(
                   hintText: 'Enter your password',
                 ),
@@ -130,8 +150,22 @@ class _LoginPageState extends State<LoginPageState> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   InkWell(
-                    onTap: () {
-                      _openHomePage();
+                    onTap: () async {
+                      AuthServices _auth = AuthServices();
+                      if (_account.email == "" ||
+                          _account.email == null ||
+                          _account.password == "" ||
+                          _account.password == null) {
+                        _openSnackbar(
+                            context, "Please enter all required fields");
+                      }
+                      String _message = await _auth.signinAccount(
+                          _account.email!, _account.password!);
+                      if (_message == 'success') {
+                        _openHomePage();
+                      } else {
+                        _openSnackbar(context, _message);
+                      }
                     },
                     child: Center(
                       child: Container(
@@ -159,9 +193,8 @@ class _LoginPageState extends State<LoginPageState> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 117, vertical: 25),
                       decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(7)),
-                        color: Colors.black
-                      ),
+                          borderRadius: BorderRadius.all(Radius.circular(7)),
+                          color: Colors.black),
                       child: const Text(
                         "Register",
                         style: TextStyle(
