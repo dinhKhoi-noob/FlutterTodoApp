@@ -385,7 +385,8 @@ class _HomePageState extends State<HomePageState> {
                             Column(
                               children: <Widget>[
                                 InkWell(
-                                  onTap: () {},
+                                  onTap: () {
+                                  },
                                   child: Column(
                                     children: const <Widget>[
                                       Icon(Icons.menu_rounded,
@@ -402,8 +403,21 @@ class _HomePageState extends State<HomePageState> {
                                 )
                               ],
                             ),
-                            const SizedBox(
-                              width: 80,
+                            InkWell(
+                              onTap: () {
+                                _openPopup(context);
+                              },
+                              child: Container(
+                                height: 80,
+                                width: 80,
+                                // padding: EdgeInsets.all(30),
+                                margin: const EdgeInsets.only(left:8),
+                                decoration: const BoxDecoration(
+                                  color: Color(0xfff96060),
+                                  shape: BoxShape.circle
+                                ),
+                                child: const Icon(Icons.add,color: Colors.white,size: 40,)
+                              ),
                             ),
                             Column(
                               children: <Widget>[
@@ -417,7 +431,7 @@ class _HomePageState extends State<HomePageState> {
                                         height: 5,
                                       ),
                                       Text(
-                                        "Quick",
+                                        "Quick note",
                                         style: TextStyle(color: Colors.white),
                                       )
                                     ],
@@ -447,24 +461,8 @@ class _HomePageState extends State<HomePageState> {
                             ),
                           ],
                         ),
-                      )),
-                  Positioned(
-                      bottom: 5,
-                      right: 0,
-                      left: 15,
-                      child: InkWell(
-                          onTap: () {
-                            _openPopup(context);
-                          },
-                          child: Container(
-                            height: 80,
-                            width: 80,
-                            decoration: const BoxDecoration(
-                                color: Color(0xfff96060),
-                                shape: BoxShape.circle),
-                            child: const Icon(Icons.add,
-                                color: Colors.white, size: 40),
-                          )))
+                      )
+                    ),
                 ],
               ),
             )
