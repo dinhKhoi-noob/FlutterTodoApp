@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import './login_page.dart';
-import '../animation/new_screen_navigator_route.dart';
+import '../reusable/new_screen_navigator_route.dart';
 
 class Onboarding extends StatelessWidget {
   const Onboarding({Key? key}) : super(key: key);

@@ -5,7 +5,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import './new_check_list_page.dart';
 import './new_task_page.dart';
 import './new_quick_note_page.dart';
-import '../animation/new_screen_navigator_route.dart';
+import '../reusable/new_screen_navigator_route.dart';
 import './user_profile_page.dart';
 
 class HomePage extends StatelessWidget {

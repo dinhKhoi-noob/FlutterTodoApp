@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import './forgot_password_page.dart';
 import './home_page.dart';
-import '../animation/new_screen_navigator_route.dart';
+import '../reusable/new_screen_navigator_route.dart';
 import './register_page.dart';
 import '../model/account.dart';
 import '../services/authenticate.dart';
@@ -163,6 +163,9 @@ class _LoginPageState extends State<LoginPageState> {
                           _account.email!, _account.password!);
                       if (_message == 'success') {
                         _openHomePage();
+                        _passwordEditingController.clear();
+                        _usernameEditingController.clear();
+                        FocusScope.of(context).requestFocus(FocusNode());
                       } else {
                         _openSnackbar(context, _message);
                       }

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:todoapp/animation/new_screen_navigator_route.dart';
+import 'package:todoapp/reusable/new_screen_navigator_route.dart';
 import '../services/authenticate.dart';
 import '../model/account.dart';
 import './home_page.dart';
+import '../reusable/show_alert_snackbar.dart';
+import '../services/user.dart';
 
 class RegisterPage extends StatelessWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -37,6 +39,8 @@ class RegisterPageState extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPageState> {
+  final TextEditingController _usernameEditingController =
+      TextEditingController();
   final TextEditingController _emailEditingController = TextEditingController();
   final TextEditingController _passwordEditingController =
       TextEditingController();
@@ -44,6 +48,7 @@ class _RegisterPageState extends State<RegisterPageState> {
       TextEditingController();
   final Account _account = Account();
   String? _confirmPassword;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -82,7 +87,28 @@ class _RegisterPageState extends State<RegisterPageState> {
               },
               style: const TextStyle(fontSize: 20),
               decoration:
-                  const InputDecoration(hintText: "HarryJames@gmail.com"),
+                  const InputDecoration(hintText: "Ex: HarryJames@gmail.com"),
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.only(top: 25),
+            child: const Text(
+              "Username",
+              style: TextStyle(fontSize: 25),
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.only(top: 10),
+            child: TextField(
+              autocorrect: false,
+              controller: _usernameEditingController,
+              onChanged: (text) {
+                setState(() {
+                  _account.username = text;
+                });
+              },
+              style: const TextStyle(fontSize: 20),
+              decoration: const InputDecoration(hintText: "Ex: Harry"),
             ),
           ),
           Container(
@@ -131,29 +157,39 @@ class _RegisterPageState extends State<RegisterPageState> {
           ),
           InkWell(
             onTap: () async {
+              ShowAlertSnackbar _snackbar = ShowAlertSnackbar();
+              if (_account.email == null ||
+                  _account.email == "" ||
+                  _account.username == null ||
+                  _account.username == "" ||
+                  _account.password == null ||
+                  _account.password == "") {
+                _snackbar.showSnackbar(
+                    context, "Please enter all required fields");
+                return;
+              }
               if (_confirmPassword != _account.password) {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    backgroundColor: Color(0xfff96060),
-                    content: Text(
-                      "Password is not equal",
-                      style: TextStyle(color: Colors.white, fontSize: 20),
-                    )));
+                _snackbar.showSnackbar(context, "Password is not equal");
+                return;
               }
               final _auth = AuthServices();
+              final _userService = UserService();
               String _message = await _auth.registerAccount(
                   _account.email!, _account.password!);
+              String _addUserMessage = await _userService.addUser(
+                  _account.username!, _account.password!, _account.email!);
+              if (_addUserMessage != "success") {
+                _snackbar.showSnackbar(context, _addUserMessage);
+                return;
+              }
               if (_message != "success") {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text(
-                    _message,
-                    style: const TextStyle(color: Colors.white, fontSize: 20),
-                  ),
-                  backgroundColor: const Color(0xfff96060),
-                ));
+                _snackbar.showSnackbar(context, _message);
+                return;
               } else {
                 _emailEditingController.clear();
                 _confirmPasswordEditingController.clear();
                 _passwordEditingController.clear();
+                FocusScope.of(context).requestFocus(FocusNode());
                 Navigator.push(
                     context, NewScreenNavigatorRoute(child: const HomePage()));
               }
