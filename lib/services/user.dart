@@ -4,6 +4,16 @@ import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
 
 class UserService {
   final CollectionReference _users = FirebaseFirestore.instance.collection('users');
+
+  // Future changeUserInformation(String username,String fileName) async {
+  //   try{
+      
+  //   }
+  //   catch(exception){
+
+  //   }
+  // }
+
   Future addUser(String username, String password, String email) async {
     try {
       _users.add({
