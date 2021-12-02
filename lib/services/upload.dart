@@ -19,6 +19,8 @@ class UploadToFirebase {
         _snackbar.showSnackbar(context, "Action was canceled");
         return null;
       }
+    } catch (exception) {
+      return null;
     }
   }
 }
