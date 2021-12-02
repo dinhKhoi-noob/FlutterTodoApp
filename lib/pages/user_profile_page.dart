@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
+import '../services/user.dart';
 import '../services/upload.dart';
 import '../reusable/new_screen_navigator_route.dart';
 import '../reusable/show_alert_snackbar.dart';
@@ -110,11 +111,8 @@ class _UserProfilePageState extends State<UserProfilePageState> {
     setState(() {
       _userAvatar = _currentAvatar;
     });
-    UploadToFirebase _uploadService = UploadToFirebase();
-    _fileName = await _uploadService.uploadImageToFirebase(
-        File(_currentAvatar!.path), context);
   }
-  
+
   void _showAvatar(BuildContext context) {
     Navigator.push(context, MaterialPageRoute(
       builder: (BuildContext context) {
@@ -191,6 +189,26 @@ class _UserProfilePageState extends State<UserProfilePageState> {
             ),
           );
         });
+  }
+
+  void _onSaveChange({String? username}) async {
+    UserService _userService = UserService();
+    if (_userAvatar != null) {
+      UploadToFirebase _uploadService = UploadToFirebase();
+      _fileName = await _uploadService.uploadImageToFirebase(
+          File(_userAvatar!.path), context);
+      
+      // if (_fileName != null) {
+      //   if(username != null)
+      //   {
+      //     _userService.changeUserInformation(
+      //       username: username,
+      //       fileName: _fileName
+      //     );
+      //   }
+        
+      // }
+    }
   }
 
   @override
@@ -277,8 +295,22 @@ class _UserProfilePageState extends State<UserProfilePageState> {
                         )
                       ],
                     ),
-                    // _userAvatar == null?
-                    // Image(image: FileImage(File(_userAvatar!.path))):Text("No picked image")
+                    Center(
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.all(10),
+                            backgroundColor: const Color(0xfff96060)),
+                        child: const Text(
+                          "Save change",
+                          style: TextStyle(fontSize: 20, color: Colors.white),
+                        ),
+                        onPressed: () {
+                          UserService _userService = UserService();
+                          _userService.changeUserInformation(
+                              username: "", fileName: _fileName);
+                        },
+                      ),
+                    )
                   ],
                 ));
           }
