@@ -9,17 +9,27 @@ class UploadToFirebase {
     ShowAlertSnackbar _snackbar = ShowAlertSnackbar();
     try {
       String timeStamp = DateTime.now().microsecondsSinceEpoch.toString();
+      String? downloadURL;
       Reference _reference =
           FirebaseStorage.instance.ref('user_avatar').child(timeStamp);
-      await _reference.putFile(file);
-      _snackbar.showSnackbar(context, "Image was uploaded");
-      return timeStamp;
+      await _reference.putFile(file).then((p0) async {
+        await FirebaseStorage.instance
+            .ref('user_avatar')
+            .child(timeStamp)
+            .getDownloadURL()
+            .then((value) {
+          downloadURL = value;
+          print("success");
+        });
+      });
+      return downloadURL;
     } on FirebaseException catch (e) {
       if (e.code == 'canceled') {
         _snackbar.showSnackbar(context, "Action was canceled");
         return null;
       }
     } catch (exception) {
+      _snackbar.showSnackbar(context, "Something went wrong");
       return null;
     }
   }
