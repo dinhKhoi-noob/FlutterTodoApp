@@ -14,9 +14,23 @@ class UserService {
           .where('email', isEqualTo: FirebaseAuth.instance.currentUser!.email)
           .get();
       String id = _snapshot.docs[0].id.toString();
-      _users
-          .doc(id)
-          .update({'avatar': 'test'}).whenComplete(() => status = "success");
+      if (fileName != null && username != null) {
+        _users
+            .doc(id)
+            .update({'avatar': fileName, 'username': username}).whenComplete(
+                () => status = "success");
+        return status;
+      }
+      if (fileName != null) {
+        _users.doc(id).update({'avatar': fileName}).whenComplete(
+            () => status = "success");
+        return status;
+      }
+      if (username != null) {
+        _users.doc(id).update({'username': username}).whenComplete(
+            () => status = "success");
+        return status;
+      }
       return status;
     } catch (exception) {
       return status;

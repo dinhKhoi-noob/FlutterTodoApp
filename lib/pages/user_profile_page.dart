@@ -79,7 +79,7 @@ class UserProfilePage extends StatelessWidget {
               icon: const Icon(Icons.logout_sharp))
         ],
       ),
-      body: const UserProfilePageState(),
+      body: const SingleChildScrollView(child: UserProfilePageState())
     );
   }
 }
@@ -96,11 +96,15 @@ class UserProfilePageState extends StatefulWidget {
 class _UserProfilePageState extends State<UserProfilePageState> {
   XFile? _userAvatar;
   String? _fileName;
-  ImageProvider _setImageProvider() {
-    if (_userAvatar != null) {
+  String? _editedUsername;
+  bool _imageChanged = false;
+  bool _isOnEdittingUsername = false;
+  TextEditingController _usernameEdittingController = TextEditingController();
+  ImageProvider _setImageProvider(String imageURL) {
+    if (_imageChanged == true && _userAvatar != null) {
       return FileImage(File(_userAvatar!.path));
     } else {
-      return const AssetImage('asset/image/user_avatar.png');
+      return NetworkImage(imageURL);
     }
   }
 
@@ -110,24 +114,64 @@ class _UserProfilePageState extends State<UserProfilePageState> {
         await _picker.pickImage(source: ImageSource.gallery);
     setState(() {
       _userAvatar = _currentAvatar;
+      _imageChanged = true;
     });
   }
 
-  void _showAvatar(BuildContext context) {
+  Widget _setUsernameField(String _currentUsername) {
+    if (_isOnEdittingUsername == true) {
+      _usernameEdittingController.text = _editedUsername!;
+      return SizedBox(
+        width: 200,
+        child: TextField(
+          controller: _usernameEdittingController,
+          style: const TextStyle(fontSize: 18),
+          autofocus: true,
+          onEditingComplete: () {
+            setState(() {
+              _isOnEdittingUsername = false;
+            });
+          },
+          onChanged: (text) {
+            setState(() {
+              _editedUsername = text;
+            });
+          },
+        ),
+      );
+    }
+    return Row(
+      children: <Widget>[
+        Text(
+          _currentUsername,
+          style: const TextStyle(fontSize: 18),
+        ),
+        IconButton(
+            onPressed: () {
+              setState(() {
+                _isOnEdittingUsername = true;
+              });
+            },
+            icon: const Icon(Icons.edit))
+      ],
+    );
+  }
+
+  void _showAvatar(BuildContext context, String imageURL) {
     Navigator.push(context, MaterialPageRoute(
       builder: (BuildContext context) {
         return Center(
             child: Container(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
-          decoration:
-              BoxDecoration(image: DecorationImage(image: _setImageProvider())),
+          decoration: BoxDecoration(
+              image: DecorationImage(image: _setImageProvider(imageURL))),
         ));
       },
     ));
   }
 
-  void _showBottomDialog(BuildContext context) {
+  void _showBottomDialog(BuildContext context, String imageURL) {
     showModalBottomSheet(
         context: context,
         builder: (BuildContext context) {
@@ -147,7 +191,7 @@ class _UserProfilePageState extends State<UserProfilePageState> {
                               width: 1))),
                   child: InkWell(
                     onTap: () {
-                      _showAvatar(context);
+                      _showAvatar(context, imageURL);
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -193,22 +237,26 @@ class _UserProfilePageState extends State<UserProfilePageState> {
 
   void _onSaveChange({String? username}) async {
     UserService _userService = UserService();
+    ShowAlertSnackbar _snackbar = ShowAlertSnackbar();
+    String? status;
     if (_userAvatar != null) {
       UploadToFirebase _uploadService = UploadToFirebase();
       _fileName = await _uploadService.uploadImageToFirebase(
           File(_userAvatar!.path), context);
-      
-      // if (_fileName != null) {
-      //   if(username != null)
-      //   {
-      //     _userService.changeUserInformation(
-      //       username: username,
-      //       fileName: _fileName
-      //     );
-      //   }
-        
-      // }
     }
+    if (_fileName != null && username != null) {
+      status = await _userService.changeUserInformation(
+          username: username, fileName: _fileName);
+      _snackbar.showSnackbar(context, status.toString());
+      return;
+    }
+    if (username != null) {
+      status = await _userService.changeUserInformation(username: username);
+      _snackbar.showSnackbar(context, status.toString());
+      return;
+    }
+    status = await _userService.changeUserInformation(fileName: _fileName);
+    _snackbar.showSnackbar(context, status.toString());
   }
 
   @override
@@ -245,7 +293,7 @@ class _UserProfilePageState extends State<UserProfilePageState> {
                   children: <Widget>[
                     InkWell(
                       onTap: () {
-                        _showBottomDialog(context);
+                        _showBottomDialog(context, _user!['avatar']);
                       },
                       child: Center(
                         child: Container(
@@ -254,8 +302,8 @@ class _UserProfilePageState extends State<UserProfilePageState> {
                           margin: const EdgeInsets.symmetric(vertical: 15),
                           decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              image:
-                                  DecorationImage(image: _setImageProvider())),
+                              image: DecorationImage(
+                                  image: _setImageProvider(_user['avatar']))),
                         ),
                       ),
                     ),
@@ -270,6 +318,9 @@ class _UserProfilePageState extends State<UserProfilePageState> {
                               style: TextStyle(
                                   fontSize: 20, fontWeight: FontWeight.bold),
                             ),
+                            SizedBox(
+                              height: 10,
+                            ),
                             Text(
                               "Email:",
                               style: TextStyle(
@@ -282,10 +333,7 @@ class _UserProfilePageState extends State<UserProfilePageState> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
-                              Text(
-                                _user['username'],
-                                style: const TextStyle(fontSize: 18),
-                              ),
+                              _setUsernameField(_user['username']),
                               Text(
                                 _user['email'],
                                 style: const TextStyle(fontSize: 18),
@@ -295,6 +343,8 @@ class _UserProfilePageState extends State<UserProfilePageState> {
                         )
                       ],
                     ),
+                    const SizedBox(height:100),
+                    if(_isOnEdittingUsername == true || _imageChanged == true)
                     Center(
                       child: OutlinedButton(
                         style: OutlinedButton.styleFrom(
@@ -305,9 +355,9 @@ class _UserProfilePageState extends State<UserProfilePageState> {
                           style: TextStyle(fontSize: 20, color: Colors.white),
                         ),
                         onPressed: () {
-                          UserService _userService = UserService();
-                          _userService.changeUserInformation(
-                              username: "", fileName: _fileName);
+                          _editedUsername == null
+                              ? _onSaveChange()
+                              : _onSaveChange(username: _editedUsername);
                         },
                       ),
                     )
